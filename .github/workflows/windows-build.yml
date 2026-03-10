@@ -8,10 +8,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1️⃣ کلون ریپو
+      # 1️⃣ کلون ریپو (همه تاریخچه و tagها)
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # fetch all history including tags
 
-      # 2️⃣ کلون Flutter main branch
+      # 2️⃣ کلون Flutter main branch (برای Dart ≥3.10.7)
       - name: Clone Flutter main branch
         run: git clone https://github.com/flutter/flutter.git -b main flutter-sdk
 
@@ -29,10 +31,9 @@ jobs:
 
       # 6️⃣ ساخت Release با tag واقعی
       - name: Create GitHub Release
-        id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v2.2.0          # ← اینجا tag واقعی که push کردی
+          tag_name: v2.2.0          # ← دقیقا همان tag واقعی روی GitHub
           name: Windows Build v2.2.0
           body: "Windows release built automatically by GitHub Actions."
         env:
