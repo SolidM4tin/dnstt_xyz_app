@@ -29,11 +29,15 @@ jobs:
       - name: Build Windows release
         run: ./scripts/build_windows.sh release
 
-      # 6️⃣ ساخت git tag
-      - name: Create git tag
+      # 6️⃣ Configure Git and create git tag
+      - name: Configure Git and create tag
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag v2.2.0 || echo "Tag already exists"
           git push origin v2.2.0 || echo "Tag already pushed"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 7️⃣ ساخت GitHub Release
       - name: Create GitHub Release
