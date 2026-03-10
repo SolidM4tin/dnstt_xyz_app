@@ -29,17 +29,23 @@ jobs:
       - name: Build Windows release
         run: ./scripts/build_windows.sh release
 
-      # 6️⃣ ساخت Release با tag واقعی
+      # 6️⃣ ساخت git tag
+      - name: Create git tag
+        run: |
+          git tag v2.2.0 || echo "Tag already exists"
+          git push origin v2.2.0 || echo "Tag already pushed"
+
+      # 7️⃣ ساخت GitHub Release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v2.2.0          # ← دقیقا همان tag واقعی روی GitHub
+          tag_name: v2.2.0
           name: Windows Build v2.2.0
           body: "Windows release built automatically by GitHub Actions."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 7️⃣ آپلود exe به Release
+      # 8️⃣ آپلود exe به Release
       - name: Upload Windows exe to Release
         uses: softprops/action-gh-release@v1
         with:
