@@ -15,7 +15,7 @@ jobs:
       - name: Clone Flutter main branch
         run: git clone https://github.com/flutter/flutter.git -b main flutter-sdk
 
-      # 3️⃣ نمایش نسخه Flutter و Dart
+      # 3️⃣ بررسی نسخه Flutter و Dart
       - name: Flutter version
         run: flutter-sdk\bin\flutter.bat --version
 
@@ -31,15 +31,16 @@ jobs:
       - name: Build Windows release
         run: ./scripts/build_windows.sh release
 
-      # 7️⃣ ایجاد tag خودکار
+      # 7️⃣ ایجاد tag خودکار (PowerShell)
       - name: Create Git tag
+        shell: pwsh
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          TAG_NAME="windows-build-$(date +'%Y%m%d%H%M%S')"
+          $TAG_NAME = "windows-build-" + (Get-Date -Format "yyyyMMddHHmmss")
           git tag -a $TAG_NAME -m "Auto Windows build"
           git push origin --tags
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "TAG_NAME=$TAG_NAME" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
       # 8️⃣ ساخت Release با همان tag
       - name: Create GitHub Release
