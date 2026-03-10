@@ -10,19 +10,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Node
+        uses: actions/setup-node@v4
         with:
-          dotnet-version: 8.0.x
+          node-version: 20
 
-      - name: Restore
-        run: dotnet restore dnstt_xyz_app.csproj
+      - name: Install dependencies
+        run: npm install
 
-      - name: Publish
-        run: dotnet publish dnstt_xyz_app.csproj -c Release -r win-x64 --self-contained true
+      - name: Install Tauri CLI
+        run: npm install -g @tauri-apps/cli
 
-      - name: Upload
+      - name: Build app
+        run: npm run tauri build
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: "**/publish/*"
+          path: src-tauri/target/release/bundle
