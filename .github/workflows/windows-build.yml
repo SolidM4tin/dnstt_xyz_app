@@ -8,12 +8,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1️⃣ کلون ریپو (همه تاریخچه و tagها)
+      # 1️⃣ کلون ریپو با تمام تاریخچه و tagها
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # fetch all history including tags
+          fetch-depth: 0   # fetch all history including tags
 
-      # 2️⃣ کلون Flutter main branch (برای Dart ≥3.10.7)
+      # 2️⃣ کلون Flutter main branch
       - name: Clone Flutter main branch
         run: git clone https://github.com/flutter/flutter.git -b main flutter-sdk
 
