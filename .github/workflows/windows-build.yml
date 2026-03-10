@@ -8,31 +8,24 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1️⃣ کلون ریپو
       - uses: actions/checkout@v4
 
-      # 2️⃣ نصب Flutter از کانال dev (آخرین Dart)
       - name: Install Flutter (dev channel)
         run: |
           git clone https://github.com/flutter/flutter.git -b dev flutter-sdk
-          echo "${{ github.workspace }}/flutter-sdk/bin" >> $GITHUB_PATH
-          flutter --version
+          flutter-sdk\bin\flutter.bat --version
 
-      # 3️⃣ فعال کردن Windows desktop
       - name: Enable Windows desktop
-        run: flutter config --enable-windows-desktop
+        run: flutter-sdk\bin\flutter.bat config --enable-windows-desktop
 
-      # 4️⃣ نصب dependencies
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter-sdk\bin\flutter.bat pub get
 
-      # 5️⃣ بیلد ویندوز
       - name: Build Windows release
         run: |
           chmod +x ./scripts/build_windows.sh
           ./scripts/build_windows.sh release
 
-      # 6️⃣ آپلود خروجی
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
