@@ -11,38 +11,34 @@ jobs:
       # 1️⃣ کلون ریپو
       - uses: actions/checkout@v4
 
-      # 2️⃣ کلون Flutter main branch (برای Dart ≥ 3.10.7)
+      # 2️⃣ کلون Flutter main branch
       - name: Clone Flutter main branch
         run: git clone https://github.com/flutter/flutter.git -b main flutter-sdk
 
-      # 3️⃣ بررسی نسخه Flutter و Dart
-      - name: Flutter version
-        run: flutter-sdk\bin\flutter.bat --version
-
-      # 4️⃣ فعال کردن Windows desktop
+      # 3️⃣ فعال کردن Windows desktop
       - name: Enable Windows desktop
         run: flutter-sdk\bin\flutter.bat config --enable-windows-desktop
 
-      # 5️⃣ نصب dependencies
+      # 4️⃣ نصب dependencies
       - name: Get dependencies
         run: flutter-sdk\bin\flutter.bat pub get
 
-      # 6️⃣ بیلد Windows release
+      # 5️⃣ بیلد Windows release
       - name: Build Windows release
         run: ./scripts/build_windows.sh release
 
-      # 7️⃣ ایجاد tag خودکار (PowerShell)
+      # 6️⃣ ساخت یک tag واقعی روی GitHub
       - name: Create Git tag
         shell: pwsh
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           $TAG_NAME = "windows-build-" + (Get-Date -Format "yyyyMMddHHmmss")
-          git tag -a $TAG_NAME -m "Auto Windows build"
-          git push origin --tags
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
-      # 8️⃣ ساخت Release با همان tag
+      # 7️⃣ ساخت Release با tag واقعی
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -53,7 +49,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 9️⃣ آپلود exe به Release
+      # 8️⃣ آپلود exe به Release
       - name: Upload Windows exe to Release
         uses: softprops/action-gh-release@v1
         with:
