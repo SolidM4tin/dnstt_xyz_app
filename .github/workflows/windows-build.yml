@@ -8,26 +8,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.13.0'  # نسخه پایدار با Dart ≥3.10.7
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.7'  # نسخه جدید با Dart >= 3.10.7
 
-    - name: Enable Windows build
-      run: flutter config --enable-windows-desktop
+      - name: Enable Windows build
+        run: flutter config --enable-windows-desktop
 
-    - name: Get dependencies
-      run: flutter pub get
+      - name: Get dependencies
+        run: flutter pub get
 
-    - name: Build Windows release
-      run: |
-        chmod +x ./scripts/build_windows.sh
-        ./scripts/build_windows.sh release
+      - name: Build Windows release
+        run: |
+          chmod +x ./scripts/build_windows.sh
+          ./scripts/build_windows.sh release
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-build
-        path: build/windows/runner/Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/runner/Release
