@@ -1,31 +1,37 @@
 name: Build Windows
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # اجرا با یک کلیک از Actions
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
+      # 1️⃣ کلون ریپو
       - uses: actions/checkout@v4
 
-      - name: Install Flutter (dev channel)
-        run: |
-          git clone https://github.com/flutter/flutter.git -b dev flutter-sdk
-          flutter-sdk\bin\flutter.bat --version
+      # 2️⃣ کلون آخرین Flutter از main branch (Dart >= 3.10.7)
+      - name: Clone Flutter main branch
+        run: git clone https://github.com/flutter/flutter.git -b main flutter-sdk
 
+      # 3️⃣ بررسی نسخه Flutter و Dart
+      - name: Flutter version
+        run: flutter-sdk\bin\flutter.bat --version
+
+      # 4️⃣ فعال کردن Windows desktop
       - name: Enable Windows desktop
         run: flutter-sdk\bin\flutter.bat config --enable-windows-desktop
 
+      # 5️⃣ نصب dependencies
       - name: Get dependencies
         run: flutter-sdk\bin\flutter.bat pub get
 
+      # 6️⃣ بیلد ویندوز با اسکریپت پروژه
       - name: Build Windows release
-        run: |
-          chmod +x ./scripts/build_windows.sh
-          ./scripts/build_windows.sh release
+        run: ./scripts/build_windows.sh release
 
+      # 7️⃣ آپلود خروجی
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
