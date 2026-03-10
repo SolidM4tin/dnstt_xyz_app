@@ -1,4 +1,4 @@
-name: Build Windows
+name: build-windows
 
 on:
   workflow_dispatch:
@@ -16,10 +16,10 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore dnstt_xyz_app.csproj
 
       - name: Publish
-        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+        run: dotnet publish dnstt_xyz_app.csproj -c Release -r win-x64 --self-contained true
 
       - name: Upload
         uses: actions/upload-artifact@v4
