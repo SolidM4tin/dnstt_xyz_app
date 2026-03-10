@@ -1,4 +1,4 @@
-name: build-windows
+name: Build Windows
 
 on:
   workflow_dispatch:
@@ -8,28 +8,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.10.0'
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+    - name: Enable Windows build
+      run: flutter config --enable-windows-desktop
 
-      - name: Install frontend deps
-        run: |
-          cd frontend
-          npm install
+    - name: Get dependencies
+      run: flutter pub get
 
-      - name: Build Tauri
-        run: |
-          cd frontend
-          npm run tauri build
+    - name: Build Windows release
+      run: |
+        chmod +x ./scripts/build_windows.sh
+        ./scripts/build_windows.sh release
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-build
-          path: src-tauri/target/release/bundle
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-build
+        path: build/windows/runner/Release
