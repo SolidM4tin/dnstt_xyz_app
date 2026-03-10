@@ -11,7 +11,7 @@ jobs:
       # 1️⃣ کلون ریپو
       - uses: actions/checkout@v4
 
-      # 2️⃣ کلون Flutter main branch (برای Dart جدید)
+      # 2️⃣ کلون Flutter main branch (برای Dart ≥ 3.10.7)
       - name: Clone Flutter main branch
         run: git clone https://github.com/flutter/flutter.git -b main flutter-sdk
 
@@ -31,20 +31,31 @@ jobs:
       - name: Build Windows release
         run: ./scripts/build_windows.sh release
 
-      # 7️⃣ آپلود exe به GitHub Release
-      - name: Create Release
+      # 7️⃣ ایجاد tag خودکار
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          TAG_NAME="windows-build-$(date +'%Y%m%d%H%M%S')"
+          git tag -a $TAG_NAME -m "Auto Windows build"
+          git push origin --tags
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      # 8️⃣ ساخت Release با همان tag
+      - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v2.2.0
-          name: Windows Build v2.2.0
+          tag_name: ${{ env.TAG_NAME }}
+          name: Windows Build ${{ env.TAG_NAME }}
           body: "Windows release built automatically by GitHub Actions."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # 9️⃣ آپلود exe به Release
       - name: Upload Windows exe to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: windows/**/*.exe  # wildcard برای پیدا کردن exe
+          files: windows/**/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
